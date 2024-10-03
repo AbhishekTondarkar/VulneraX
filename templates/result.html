@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VulneraX - Analysis Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="VulneraX Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#contact">Contact Us</a></li>
+                <li><button class="upload-btn">Upload File</button></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="analysis-result">
+            <h2>Analysis Result</h2>
+            <div class="result">
+                <p><strong>Vulnerable:</strong> {{ result.is_vulnerable }}</p>
+                <p><strong>Vulnerability Type:</strong> {{ result.vulnerability_type }}</p>
+                <p><strong>Severity:</strong> {{ result.severity }}</p>
+                <p><strong>Confidence:</strong> {{ "%.2f"|format(result.confidence * 100) }}%</p>
+                <p><strong>Repair Suggestion:</strong> {{ result.repair_suggestion }}</p>
+            </div>
+            <a href="/" class="button">Analyze Another Code</a>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 VulneraX. All rights reserved.</p>
+    </footer>
+</body>
+</html>
