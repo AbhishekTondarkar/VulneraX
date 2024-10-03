@@ -30,5 +30,4 @@ def api_analyze():
     
     return jsonify(serializable_result)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
