@@ -1,42 +1,34 @@
 from flask import Flask, render_template, request, jsonify
-from models.career_model import CareerModel
-import json
+import numpy as np
+from inference import analyze_vulnerability
 
 app = Flask(__name__)
-career_model = CareerModel()
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/fields')
-def fields():
-    with open('data/fields.json', 'r') as f:
-        fields = json.load(f)
-    return render_template('fields.html', fields=fields)
-
-@app.route('/skills/<field>')
-def skills(field):
-    with open('data/skills.json', 'r') as f:
-        skills = json.load(f)
-    return render_template('skills.html', field=field, skills=skills[field])
-
 @app.route('/analyze', methods=['POST'])
 def analyze():
-    skills = request.json['skills']
-    field = request.json['field']
+    code = request.form['code']
+    result = analyze_vulnerability(code)
+    return render_template('result.html', result=result)
+
+@app.route('/api/analyze', methods=['POST'])
+def api_analyze():
+    code = request.json['code']
+    result = analyze_vulnerability(code)
     
-    print(f"Received field: {field}, skills: {skills}")  # Debug print
-
-    recommendations = career_model.get_recommendations(field, skills)
-
-    print(f"Recommendations found: {recommendations}")  # Debug print
-
-    return jsonify(recommendations)
-
-@app.route('/recommendation')
-def recommendation():
-    return render_template('recommendation.html')
+    # Convert result to a JSON-serializable format
+    serializable_result = {
+        'is_vulnerable': bool(result['is_vulnerable']),
+        'vulnerability_type': result['vulnerability_type'],
+        'severity': result['severity'],
+        'confidence': float(result['confidence']),
+        'repair_suggestion': result['repair_suggestion']
+    }
+    
+    return jsonify(serializable_result)
 
 if __name__ == '__main__':
     app.run(debug=True)
